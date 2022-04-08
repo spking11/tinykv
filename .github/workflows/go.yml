@@ -16,5 +16,8 @@ jobs:
     - name: Check out code into the Go module directory
       uses: actions/checkout@v1
 
+    - name: Test Finished
+      run: make project1
+
     - name: Build & Test
       run: make ci
