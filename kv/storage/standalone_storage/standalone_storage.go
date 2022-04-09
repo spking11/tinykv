@@ -6,7 +6,6 @@ import (
 	"github.com/pingcap-incubator/tinykv/kv/storage"
 	"github.com/pingcap-incubator/tinykv/kv/util/engine_util"
 	"github.com/pingcap-incubator/tinykv/proto/pkg/kvrpcpb"
-	"log"
 )
 
 // StandAloneStorage is an implementation of `Storage` for a single-node TinyKV instance. It does not
@@ -36,26 +35,17 @@ func (r *StandAloneStorageReader) Close() {
 }
 
 func NewStandAloneStorage(conf *config.Config) *StandAloneStorage {
-	opts := badger.DefaultOptions
-	opts.Dir = conf.DBPath
-	opts.ValueDir = conf.DBPath
-	db, err := badger.Open(opts)
-	if err != nil {
-		log.Fatal(err)
-	}
 	return &StandAloneStorage{
-		db,
+		db: engine_util.CreateDB(conf.DBPath, conf.Raft),
 	}
 }
 
 func (s *StandAloneStorage) Start() error {
-	// Your Code Here (1).
 	return nil
 }
 
 func (s *StandAloneStorage) Stop() error {
-	// Your Code Here (1).
-	return nil
+	return s.db.Close()
 }
 
 func (s *StandAloneStorage) Reader(ctx *kvrpcpb.Context) (storage.StorageReader, error) {
